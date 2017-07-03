@@ -1,6 +1,7 @@
 var PORT = process.env.PORT || 3000;
 var moment = require('moment');
 var express = require('express');
+var dbconnnect = require('./insertintodb.js');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -62,6 +63,17 @@ io.on('connection', function(socket){
 
 	socket.on('message',function(message){
 		console.log('Message received: ' + message.text);
+		var momentTimestamp = moment.utc(message.timestamp);
+		var timestamp = momentTimestamp.local().format("h:mm a");
+
+		var dataobj = {
+			name: message.name,
+			room: clientInfo[socket.id].room,
+			message: message.text,
+			timestamp: timestamp
+		}
+
+		dbconnnect.insertfunc(dataobj);
 
 		if(message.text === '@currentUsers'){
 			sendCurrentUsers(socket);

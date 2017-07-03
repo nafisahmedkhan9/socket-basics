@@ -24,6 +24,9 @@ socket.on('message', function(message) {
 	$message.append('<p><strong>'+ message.name + "  " +momentTimestamp.local().format("h:mm a")+"</strong></p>");
 	$message.append("<p>"+ message.text +"</p>");
 	$messages.append($message);
+
+	// for handling scrolling : If new msg is send or recieve then scroll come at bottom
+	$('#mylist').animate({scrollTop: $('#mylist').prop("scrollHeight")}, 500);
 });
 
 // Handles submitting of new message
@@ -36,7 +39,7 @@ $form.on('submit', function(event) {
 
 	socket.emit('message', {
 		name: name,
-		text: $message.val()
+		text: $message.val(),
 	});
 	$message.val('');
 });
