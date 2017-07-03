@@ -6,6 +6,7 @@ var room = getQueryVariable("room");
 jQuery('.room-title').text(room);
 
 socket.on('connect', function() {
+	//alert("getting connected");
 	console.log('Connect the socket.io server');
 
 	socket.emit('joinRoom', {
@@ -22,7 +23,7 @@ socket.on('message', function(message) {
 	console.log(message.text);
 	$message.append('<p><strong>'+ message.name + "  " +momentTimestamp.local().format("h:mm a")+"</strong></p>");
 	$message.append("<p>"+ message.text +"</p>");
-	$messages.append($message)
+	$messages.append($message);
 });
 
 // Handles submitting of new message

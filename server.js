@@ -29,7 +29,7 @@ function sendCurrentUsers (socket) {
 		name: 'System',
 		text: 'Current Users: '+ users.join(', '),
 		timestamp: moment.valueOf()
-	})
+	});
 }
 
 io.on('connection', function(socket){

@@ -18,8 +18,10 @@
 				<a href="/index.html">Change Setting</a>
 
 				<h1 class="room-title text-center"><!-- room name (use jQuery) --></h1>
-
-				<ul class="messages list-group">
+				<div>
+					
+				</div>
+				<ul class="messages list-group" style="width: 550px; height: 300px; overflow: auto">
 					<!-- Messages end up here! -->
 				</ul>
 				<form id = "message-form">
@@ -42,5 +44,10 @@
 	<script src="/js/moment.js"></script>
 	<script src="/js/QueryParams.js"></script>
 	<script src="/js/app.js"></script>
+	<!-- <script type="text/javascript">
+		$(document).ready(function(){
+		    $('body').scrollTop($('ul li').last().position().top + $('ul li').last().height());
+		});
+	</script> -->
 </body>
 </html>
