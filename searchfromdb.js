@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var PORT = process.env.PORT || 3308 ;
 exports.searching = function(start, end, cb){
 	var connection = mysql.createConnection({
-		host: '',
+		host: 'https://socketchatting.herokuapp.com',
 		port: PORT,
 		user: '',
 		password: '',
