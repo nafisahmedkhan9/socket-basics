@@ -68,7 +68,7 @@
         event.preventDefault();
         var socket = io();
         var $form = jQuery('#timeform');
-        $('.hismessages').empty();
+        $('ul').empty();
         var from = $form.find('input[name=timeone]');
         var to = $form.find('input[name=timetwo]');
         console.log('message : '+ from.val()+" "+to.val());
