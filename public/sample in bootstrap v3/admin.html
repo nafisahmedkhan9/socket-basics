@@ -50,7 +50,7 @@
 <script src="/js/socket.io-1.7.3.js"></script>
 <script src="/js/moment.js"></script>
 <script src="/js/QueryParams.js"></script>
-<script src="/js/app.js"></script>
+<!-- <script src="/js/app.js"></script> -->
 <script type="text/javascript">
     $('.form_datetime').datetimepicker({
         format: 'dd-mm-yyyy H:i p',
@@ -64,10 +64,10 @@
     });
 </script>
 <script>
-    var socket = io();
-    var $form = jQuery('#timeform');
     $form.on('submit', function(event) {
         event.preventDefault();
+        var socket = io();
+        var $form = jQuery('#timeform');
         $('.hismessages').empty();
         var from = $form.find('input[name=timeone]');
         var to = $form.find('input[name=timetwo]');

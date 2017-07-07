@@ -8,6 +8,9 @@ exports.insertfunc = function(dataobj){
 		database: 'naf'
 	});
 	connection.connect();
+	if (dataobj.room === "Anonymous") {
+		return;
+	}
 	var sql = "INSERT INTO chathistory VALUES ('"+dataobj.name+"','"+dataobj.room+"','"+dataobj.text+"',"+dataobj.timestamp+")";
 	console.log(sql);
 	connection.query(sql, function(err, result) {
