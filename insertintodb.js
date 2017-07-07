@@ -1,11 +1,12 @@
 var mysql = require('mysql');
+var PORT = process.env.PORT || 3308 ;
 exports.insertfunc = function(dataobj){
 	var connection = mysql.createConnection({
-		host: 'localhost',
-		port: 3308,
-		user: 'root',
-		password: 'root',
-		database: 'naf'
+		host: '',
+		port: PORT,
+		user: '',
+		password: '',
+		database: ''
 	});
 	connection.connect();
 	if (dataobj.room === "Anonymous") {
