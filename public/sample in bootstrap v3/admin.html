@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    <style>
+        .well {
+            margin-top: 35px;
+        }
+        .messages p {
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 well">
+            <form id="timeform"> 
+                <div class="form-group">
+                    <label for="dtp_input1" class="control-label">From</label>
+                    <div class="input-group date form_datetime">
+                        <input class="form-control" size="16" type="text" value="" name= "timeone" readonly>
+        				<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dtp_input1" class="control-label">To</label>
+                    <div class="input-group date form_datetime">
+                        <input class="form-control" size="16" type="text" value="" name= "timetwo" readonly>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <ul id="hismylist" class="hismessages list-group" style="width: 550px; height: 300px; display: block; overflow: auto;">
+                        <!-- Messages end up here! -->
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Search" class="btn btn-default btn-block"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+<script src="/js/socket.io-1.7.3.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/QueryParams.js"></script>
+<script src="/js/app.js"></script>
+<script type="text/javascript">
+    $('.form_datetime').datetimepicker({
+        format: 'dd-mm-yyyy H:i p',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+        showMeridian: 1
+    });
+</script>
+<script>
+    var socket = io();
+    var $form = jQuery('#timeform');
+    $form.on('submit', function(event) {
+        event.preventDefault();
+        $('.hismessages').empty();
+        var from = $form.find('input[name=timeone]');
+        var to = $form.find('input[name=timetwo]');
+        console.log('message : '+ from.val()+" "+to.val());
+        socket.emit('query', {
+            from: from.val(),
+            to: to.val()
+        });
+
+        socket.on('queryAnswer', function(fulldata){  
+            var data = fulldata.data;
+            console.log(data); 
+            var $messages = jQuery('.hismessages');
+            for ( var i=0; i<data.length; i++ ){
+                var $message = jQuery('<li class="list-group-item"></li>');
+                var momentTimestamp = moment.utc(data[i].timestamp);
+                $message.append('<p><strong>'+ data[i].name + "  " +momentTimestamp.local().format("h:mm a")+"</strong></p>");
+                $message.append("<p>"+ data[i].message +"</p>");
+                $messages.append($message);
+            }
+            $messages.append($message);
+
+            // for handling scrolling : If new msg is send or recieve then scroll come at bottom
+            $('#hismylist').animate({scrollTop: $('#hismylist').prop("scrollHeight")}, 500);
+        });
+
+        from.val("");
+        to.val(""); 
+    });    
+</script>
+</body>
+</html>

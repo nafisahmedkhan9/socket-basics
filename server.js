@@ -2,6 +2,7 @@ var PORT = process.env.PORT || 3000;
 var moment = require('moment');
 var express = require('express');
 var dbconnnect = require('./insertintodb.js');
+var dbsearch = require('./searchfromdb.js');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -26,11 +27,14 @@ function sendCurrentUsers (socket) {
 		}	
 	});
 
-	socket.emit('message', {
+	var dataobj = {
 		name: 'System',
+		room: info.room,
 		text: 'Current Users: '+ users.join(', '),
-		timestamp: moment.valueOf()
-	});
+		timestamp: moment().valueOf()
+	}
+	dbconnnect.insertfunc(dataobj);
+	socket.emit('message',dataobj);
 }
 
 io.on('connection', function(socket){
@@ -45,7 +49,7 @@ io.on('connection', function(socket){
 
 				name: 'System',
 				text: userData.name + ' has left!',
-				timestamp: moment.valueOf()
+				timestamp: moment().valueOf()
 			});
 			delete clientInfo[socket.id];
 		}
@@ -54,34 +58,45 @@ io.on('connection', function(socket){
 	socket.on('joinRoom', function(req){
 		clientInfo[socket.id] = req;
 		socket.join(req.room);
-		socket.broadcast.to(req.room).emit('message', {
+		var dataobj = {
 			name: 'System',
+			room: req.room,
 			text: req.name + ' has joined!',
-			timestamp: moment.valueOf()
-		});
+			timestamp: moment().valueOf()
+		}
+		dbconnnect.insertfunc(dataobj);
+		socket.broadcast.to(req.room).emit('message', dataobj);
 	});
 
 	socket.on('message',function(message){
 		console.log('Message received: ' + message.text);
-		var momentTimestamp = moment.utc(message.timestamp);
-		var timestamp = momentTimestamp.local().format("h:mm a");
 
-		var dataobj = {
-			name: message.name,
-			room: clientInfo[socket.id].room,
-			message: message.text,
-			timestamp: timestamp
-		}
+		message.room = clientInfo[socket.id].room;
+		message.timestamp = moment().valueOf();
 
-		dbconnnect.insertfunc(dataobj);
+		dbconnnect.insertfunc(message);
 
 		if(message.text === '@currentUsers'){
 			sendCurrentUsers(socket);
 		}else{
 			message.timestamp = moment().valueOf();
 			io.to(clientInfo[socket.id].room).emit('message', message);	
-		}
-		
+		}	
+	});
+
+	socket.on('query', function(time){
+		var fromtime = time.from;
+		var totime = time.to;
+		var fromtimestamp = moment(fromtime, "DD-MM-YYYY h:m a");
+		var totimestamp = moment(totime, "DD-MM-YYYY h:m a");
+		dbsearch.searching(fromtimestamp, totimestamp,function(data){
+			console.log("data is " + data.length);
+			socket.emit('queryAnswer',{
+				name: 'system',
+				data: data,
+				timestamp: moment().valueOf()
+			});
+		});
 	});
 
 	socket.emit('message',{

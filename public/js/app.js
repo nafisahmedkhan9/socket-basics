@@ -1,6 +1,6 @@
 var socket = io();
 var name = getQueryVariable("name") || 'Anonymous';
-var room = getQueryVariable("room");
+var room = getQueryVariable("room") || 'Anonymous'; 
 
 //update h1 tag
 jQuery('.room-title').text(room);
@@ -28,6 +28,12 @@ socket.on('message', function(message) {
 	// for handling scrolling : If new msg is send or recieve then scroll come at bottom
 	$('#mylist').animate({scrollTop: $('#mylist').prop("scrollHeight")}, 500);
 });
+
+// socket.on('queryAnswer', function(message){  
+// 	alert("bleh ")
+//     console.log('message');
+//     console.log("message"); 
+// });
 
 // Handles submitting of new message
 var $form = jQuery('#message-form');

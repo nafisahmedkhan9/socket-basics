@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-exports.insertfunc = function(dataobj){
+exports.searching = function(start, end, cb){
 	var connection = mysql.createConnection({
 		host: 'localhost',
 		port: 3308,
@@ -8,11 +8,17 @@ exports.insertfunc = function(dataobj){
 		database: 'naf'
 	});
 	connection.connect();
-	var sql = "INSERT INTO chathistory VALUES ('"+dataobj.name+"','"+dataobj.room+"','"+dataobj.text+"',"+dataobj.timestamp+")";
+	if(start > end){
+		var sql = "SELECT * FROM chathistory WHERE timestamp<"+start+" && "+"timestamp>"+end;	
+	}else{
+		var sql = "SELECT * FROM chathistory WHERE timestamp>"+start+" && "+"timestamp<"+end;	
+	}
+	
 	console.log(sql);
 	connection.query(sql, function(err, result) {
 	    if (err) throw err;
-	    console.log("1 record inserted");
+	    //console.log(result);
+	    cb(result) ;
 	});
 	connection.end();
 }
