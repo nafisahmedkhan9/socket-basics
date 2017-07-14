@@ -33,7 +33,7 @@ function sendCurrentUsers (socket) {
 		text: 'Current Users: '+ users.join(', '),
 		timestamp: moment().valueOf()
 	}
-	dbconnnect.insertfunc(dataobj);
+	//dbconnnect.insertfunc(dataobj);
 	socket.emit('message',dataobj);
 }
 
@@ -64,7 +64,7 @@ io.on('connection', function(socket){
 			text: req.name + ' has joined!',
 			timestamp: moment().valueOf()
 		}
-		dbconnnect.insertfunc(dataobj);
+		//dbconnnect.insertfunc(dataobj);
 		socket.broadcast.to(req.room).emit('message', dataobj);
 	});
 
@@ -74,7 +74,7 @@ io.on('connection', function(socket){
 		message.room = clientInfo[socket.id].room;
 		message.timestamp = moment().valueOf();
 
-		dbconnnect.insertfunc(message);
+		//dbconnnect.insertfunc(message);
 
 		if(message.text === '@currentUsers'){
 			sendCurrentUsers(socket);
@@ -84,20 +84,20 @@ io.on('connection', function(socket){
 		}	
 	});
 
-	socket.on('query', function(time){
-		var fromtime = time.from;
-		var totime = time.to;
-		var fromtimestamp = moment(fromtime, "DD-MM-YYYY h:m a");
-		var totimestamp = moment(totime, "DD-MM-YYYY h:m a");
-		dbsearch.searching(fromtimestamp, totimestamp,function(data){
-			console.log("data is " + data.length);
-			socket.emit('queryAnswer',{
-				name: 'system',
-				data: data,
-				timestamp: moment().valueOf()
-			});
-		});
-	});
+	// socket.on('query', function(time){
+	// 	var fromtime = time.from;
+	// 	var totime = time.to;
+	// 	var fromtimestamp = moment(fromtime, "DD-MM-YYYY h:m a");
+	// 	var totimestamp = moment(totime, "DD-MM-YYYY h:m a");
+	// 	dbsearch.searching(fromtimestamp, totimestamp,function(data){
+	// 		console.log("data is " + data.length);
+	// 		socket.emit('queryAnswer',{
+	// 			name: 'system',
+	// 			data: data,
+	// 			timestamp: moment().valueOf()
+	// 		});
+	// 	});
+	// });
 
 	socket.emit('message',{
 		name: 'system',
